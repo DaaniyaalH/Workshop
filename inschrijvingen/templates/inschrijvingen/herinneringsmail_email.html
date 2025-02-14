@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Herinnering voor de workshop</title>
+</head>
+<body>
+    <h2>Herinnering: Je bent ingeschreven voor een workshop!</h2>
+    <p>Hallo {{ user.first_name }},</p>
+    <p>Dit is een herinnering voor de workshop <strong>{{ workshop.title }}</strong> waar je voor bent ingeschreven.</p>
+    <p>Hier zijn de details:</p>
+    <ul>
+        <li><strong>Datum:</strong> {{ workshop.date }}</li>
+        <li><strong>Locatie:</strong> {{ workshop.location }}</li>
+    </ul>
+    <p>We hopen je daar te zien!</p>
+    <p>Met vriendelijke groet,<br>
+    Het Workshopteam</p>
+</body>
+</html>
