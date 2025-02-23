@@ -81,7 +81,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+    SECURE_SSL_REDIRECT = False
     X_FRAME_OPTIONS = 'DENY'
 
 # Wachtwoordbeleid
