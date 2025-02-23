@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 
+
 # 🔹 Lijst van workshops
 def workshop_list(request):
     workshops = Workshop.objects.all()
