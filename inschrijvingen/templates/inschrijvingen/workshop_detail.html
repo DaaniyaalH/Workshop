@@ -1,32 +1,86 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+        background: white;
+    }
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 10px;
+        width: 100%;
+        transition: background 0.3s ease-in-out;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .alert {
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .info-box {
+        background: #eef4ff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            padding: 15px;
+        }
+    }
+</style>
+
 <div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="mb-3 text-primary">{{ workshop.title }}</h2>
-        <p class="text-muted">{{ workshop.description }}</p>
-        <p><strong>📍 Locatie:</strong> {{ workshop.location }}</p>
-        <p><strong>📅 Datum:</strong> {{ workshop.date }}</p>
+    <div class="card p-4 border-0">
+        <div class="card-body">
+            <h2 class="mb-3 text-primary fw-bold">{{ workshop.title }}</h2>
+            <p class="text-muted fs-5">{{ workshop.description }}</p>
+            <hr>
+            <p class="fs-6"><strong>📍 Locatie:</strong> {{ workshop.location }}</p>
+            <p class="fs-6"><strong>📅 Datum:</strong> {{ workshop.date }}</p>
+            <p class="fs-6"><strong>👥 Capaciteit:</strong> {{ workshop.capacity }} plekken</p>
 
-        {% if messages %}
-            <div class="mt-3">
-                {% for message in messages %}
-                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            {% if messages %}
+                <div class="mt-3">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="mt-4 info-box">
+                <h3 class="mb-3 text-dark">Inschrijven voor deze workshop</h3>
+                <form method="post" action="{% url 'inschrijving' workshop.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.as_p }}
                     </div>
-                {% endfor %}
+                    <button type="submit" class="btn btn-primary">📩 Inschrijven</button>
+                </form>
             </div>
-        {% endif %}
-
-        <h3 class="mt-4">Inschrijven voor deze workshop</h3>
-        <form method="post" action="{% url 'inschrijving' workshop.id %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary mt-3">📩 Inschrijven</button>
-        </form>
-        
-        </form>
+        </div>
     </div>
 </div>
+
 {% endblock %}

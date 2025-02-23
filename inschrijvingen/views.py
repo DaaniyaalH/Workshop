@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 
-
 # 🔹 Lijst van workshops
 def workshop_list(request):
     workshops = Workshop.objects.all()
@@ -22,10 +21,8 @@ def workshop_detail(request, workshop_id):
 def inschrijving_bevestiging_view(request):
     return render(request, 'inschrijvingen/inschrijving_bevestiging.html')
 
-
 # 🔹 Functie om bevestigingsmail te sturen
 def stuur_bevestigingsmail(user_email, workshop):
-    # Haal gegevens voor de email
     subject = 'Bevestiging van je inschrijving'
     message = render_to_string('inschrijvingen/bevestigingsmail_template.html', {
         'gebruiker_naam': user_email.split('@')[0],  # Gebruik de naam uit het emailadres
@@ -43,7 +40,6 @@ def stuur_bevestigingsmail(user_email, workshop):
         html_message=message,
     )
 
-
 # 🔹 Functie voor inschrijven
 def inschrijving_view(request, workshop_id):
     workshop = get_object_or_404(Workshop, id=workshop_id)
@@ -51,7 +47,12 @@ def inschrijving_view(request, workshop_id):
     if request.method == 'POST':
         form = InschrijvingForm(request.POST)
         if form.is_valid():
-            # Controleer of de gebruiker al is ingeschreven
+            # ✅ Controleer of er nog plek is
+            if workshop.capacity <= 0:
+                messages.error(request, "Helaas, deze workshop is vol.")
+                return redirect('workshop_detail', workshop_id=workshop.id)
+
+            # ✅ Controleer of de gebruiker al is ingeschreven
             bestaande_inschrijving = Inschrijving.objects.filter(
                 email=form.cleaned_data['email'], 
                 workshop=workshop
@@ -61,12 +62,16 @@ def inschrijving_view(request, workshop_id):
                 messages.error(request, "Je bent al ingeschreven voor deze workshop.")
                 return redirect('workshop_detail', workshop_id=workshop.id)
 
-            # Opslaan als inschrijving nog niet bestaat
+            # ✅ Inschrijving opslaan
             inschrijving = form.save(commit=False)
             inschrijving.workshop = workshop
             inschrijving.save()
 
-            # Stuur bevestigingsmail
+            # ✅ Capaciteit verlagen
+            workshop.capacity -= 1
+            workshop.save()
+
+            # ✅ Bevestigingsmail sturen
             stuur_bevestigingsmail(form.cleaned_data['email'], workshop)
 
             messages.success(request, "Je inschrijving is succesvol!")
